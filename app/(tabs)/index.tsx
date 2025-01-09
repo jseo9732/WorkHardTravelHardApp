@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { theme } from "@/colors";
@@ -23,9 +24,7 @@ export default function HomeScreen() {
     if (text === "") {
       return;
     }
-    const newTodos = Object.assign({}, toDos, {
-      [Date.now()]: { text, work: working },
-    });
+    const newTodos = { ...toDos, [Date.now()]: { text, work: working } };
     setToDos(newTodos);
     setText("");
   };
@@ -63,6 +62,13 @@ export default function HomeScreen() {
         placeholderTextColor={"lightgrey"}
         style={styles.input}
       />
+      <ScrollView>
+        {Object.keys(toDos).map((key) => (
+          <View style={styles.toDo} key={key}>
+            <Text style={styles.toDoText}> {toDos[key].text}</Text>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -80,7 +86,19 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,
-    marginTop: 20,
+    marginVertical: 20,
     fontSize: 18,
+  },
+  toDo: {
+    backgroundColor: theme.toDoBg,
+    marginBottom: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+  },
+  toDoText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
