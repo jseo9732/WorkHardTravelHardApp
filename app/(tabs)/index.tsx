@@ -1,12 +1,23 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { theme } from "@/colors";
 import { useState } from "react";
 
 export default function HomeScreen() {
   const [working, setWorking] = useState(true);
+  const [text, setText] = useState("");
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
+
+  const onChangeText = (payload) => {
+    setText(payload);
+  };
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -29,6 +40,15 @@ export default function HomeScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+      <TextInput
+        placeholder={
+          working ? "할 일을 입력하세요." : "가고 싶은 곳을 입력하세요."
+        }
+        onChangeText={onChangeText}
+        value={text}
+        placeholderTextColor={"lightgrey"}
+        style={styles.input}
+      />
     </View>
   );
 }
@@ -41,4 +61,12 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   btnText: { fontSize: 38, fontWeight: "600" },
+  input: {
+    backgroundColor: "white",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    marginTop: 20,
+    fontSize: 18,
+  },
 });
