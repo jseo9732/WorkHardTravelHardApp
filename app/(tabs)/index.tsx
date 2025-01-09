@@ -12,12 +12,24 @@ import { useState } from "react";
 export default function HomeScreen() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
+  const [toDos, setToDos] = useState({});
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
 
   const onChangeText = (payload) => {
     setText(payload);
   };
+  const addTodo = () => {
+    if (text === "") {
+      return;
+    }
+    const newTodos = Object.assign({}, toDos, {
+      [Date.now()]: { text, work: working },
+    });
+    setToDos(newTodos);
+    setText("");
+  };
+  console.log(toDos);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -44,6 +56,8 @@ export default function HomeScreen() {
         placeholder={
           working ? "할 일을 입력하세요." : "가고 싶은 곳을 입력하세요."
         }
+        returnKeyType="done"
+        onSubmitEditing={addTodo}
         onChangeText={onChangeText}
         value={text}
         placeholderTextColor={"lightgrey"}
