@@ -8,27 +8,43 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { theme } from "@/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const STORAGE_KEY = "@toDos";
 
 export default function HomeScreen() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
+  useEffect(() => {
+    loadToDos();
+  }, []);
+
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
 
   const onChangeText = (payload) => {
     setText(payload);
   };
-  const addTodo = () => {
+  const loadToDos = async () => {
+    const s = await AsyncStorage.getItem(STORAGE_KEY);
+    s !== null ? setToDos(JSON.parse(s)) : null;
+  };
+
+  const addTodo = async () => {
     if (text === "") {
       return;
     }
-    const newTodos = { ...toDos, [Date.now()]: { text, work: working } };
+    const saveToDos = async (toSave) => {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    };
+    const newTodos = { ...toDos, [Date.now()]: { text, working } };
     setToDos(newTodos);
+    await saveToDos(newTodos);
     setText("");
   };
-  console.log(toDos);
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -63,11 +79,13 @@ export default function HomeScreen() {
         style={styles.input}
       />
       <ScrollView>
-        {Object.keys(toDos).map((key) => (
-          <View style={styles.toDo} key={key}>
-            <Text style={styles.toDoText}> {toDos[key].text}</Text>
-          </View>
-        ))}
+        {Object.keys(toDos).map((key) =>
+          toDos[key].working === working ? (
+            <View style={styles.toDo} key={key}>
+              <Text style={styles.toDoText}> {toDos[key].text}</Text>
+            </View>
+          ) : null
+        )}
       </ScrollView>
     </View>
   );
